@@ -1,14 +1,1 @@
-{
-    "type": "service_account",
-    "project_id": "sephirothacademy",
-    "private_key_id": "90e8251839c3a65ad4bccfe0c7054b4e97173f1c",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCYNn42Z2FYz2bb\nwqU/gUxRzCYYmsIbn4FoZt98v9xp3XYK4ceDLYJvrgtVtHR26Dl4xD4h9tvnBX6m\nXqhzvp7dqPA0OTn9D8cwejJop5HG/8V80uOUdInvIEAC1LnXo0A25nJJuXLvu4id\ncE39a4g5PCNMFcpr0/LaayzoiPsHiRHmgxWVXAvSoApwHfx6PwgqqGD9MzagIM1g\nYtl5FZabhwUyONB873jdOYlzyb7ZVsKmtR+x/V4Cej5ahmkJnB0XBbAjK2ZPcR/h\nCih9loft/akoJmNVPt2Z1RW31n6/+OVXqQ+wPdficF2TWI+uP2U/VaY/Dq98UnUP\nQ+G8HJyDAgMBAAECggEASZDIxk2HyI8Q9PSpvjwlIUGMRgcB+qzINCfIKvhltIrT\nAuZlcXp82LIjC0yYn2GUaVBbgTnYxVqsAAeu3aYLDTGZynvAEZVfHYhptZgLhkTW\n84HPeVAr3DVXiqa6nURrBD2zjftB2CjomcMOBoXCxHrSynKbryq0bKkw/sA5p0Vy\nU9K06VKwSWQlcCE3tNv8os0noyZicFgJLMF/F2bfCxZXkD76b+gCUrQjWMPt5U62\nRExSM7P7t96OazWv59WLAIO7O4s3LamstKtqqslaFmkZ4JzegFx3T/U3Rzdwff1v\nH+88GrH04/5j2dVziZqLhonJu/0gmm+qaLL5DTrFsQKBgQDU7lb/jCEXYqitYlNT\nrn9cUrGBxcmwgYE0NTXWen+EoYyP75XYynNR8cIYxXlMSjDzSLOTPZuUSZ8EYd1j\nEfEzh2enF0dJiDNZ4kxUAj2jnqa0RZLRZzz/70QFCvr1ckx27G8u8SUIWoorBsQ9\nYHwokp4N7K7haREf9IqkCr0ucQKBgQC3ACQYTIBz8AmbPoe4QrWPegz9SbO64esL\nrNEw4MVvvAh92NDcZXx2GoFeZlTzuBVOOLKmbTYpLJhux0HCj8eAHbBHaBTLN7bs\nO7iHhoErqV60gSW+dfl+z11fmkRHtXERCb1Vs1+IiokpC/Pcw4L/oQo1i/1JP2LN\nWDOvONgcMwKBgEBXIIypcBpb4nI5wsoHcU6ZYi+/bzlZeIwpA/KiI0QVeJ7Jm3Ld\ngckiDy9jBEsMJAxvTGvSct90+4rcc4QLGOIkKSrxOsY6VKH1YnEEGFIHj4Hrf/is\nhF8lkl0fu0NNXVOWD+aUUUdb7GIh8kxFil7MJtw4R4OvNtB8GSSGZjHRAoGAdR8J\n+uM7cvg1rb4fbraDLQiYN6Nr/DeLDzXTzMyOkCxv4ttZETWCqrPcCGbGCBXQzPdM\nn2dWOpPoGz47wCH1NPHLWGgspsNJt3ehaluTYDZN/oiJd5RZ0ec1g3JgMOTXMGhj\nXO4oPmMr1bFoqeoXdTPELPEjcjW3LmU87vAaoDECgYB7m8H4RRoVLVmWNBPyw36w\nkbAErx7uDLMD0NQEA/MZUWlPZJEfnoB3SPjmMStivXgrzCG+NjHyLgBnNNa/+gzT\nrMPeswd8YmzWN0kWFoQwjqL5nPnAWtcvITb3KoBGDdqAx2NKtDCiw0Pi7a7ZNrPX\nXgBH+YalDvUt5hh1wwNVGw==\n-----END PRIVATE KEY-----\n",
-    "client_email": "myservice-bq@sephirothacademy.iam.gserviceaccount.com",
-    "client_id": "112209593342548587029",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/myservice-bq%40sephirothacademy.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
-  }
-  
+
