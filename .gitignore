@@ -1,4 +1,6 @@
 __pycache__/
-.venv
+.venv/
 .env
 sephirothacademy-90e8251839c3.json
+
+git rm --cached sephirothacademy-90e8251839c3.json
