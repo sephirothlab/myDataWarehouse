@@ -9,6 +9,7 @@ from io import StringIO
 import pyarrow as pa
 import pyarrow.parquet as pq
 from datetime import datetime
+from Utils import *
 
 
 # โหลดค่าจากไฟล์ .env
@@ -99,9 +100,11 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
     file_name = f"{table_name}_{export_date}.parquet"
     file_path = f"{gcs_folder}/{file_name}"
     
-    table = pa.Table.from_pandas(df)
-    pq.write_table(table, '/tmp/' + file_name)
-
+    bq_schema = get_bq_schema(client_bq, dataset_id, table_name)
+    # Adjust DataFrame columns to match BigQuery schema
+    df_adjusted = adjust_dataframe_types(df, bq_schema)
+    # Convert the DataFrame to a Parquet file using PyArrow
+    table = pa.Table.from_pandas(df_adjusted)
     # Upload the Parquet file to Google Cloud Storage
     bucket = client_gcs.get_bucket(gcs_bucket_name)
     blob = bucket.blob(file_path)

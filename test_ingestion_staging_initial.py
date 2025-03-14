@@ -8,7 +8,7 @@ from io import StringIO
 import pyarrow as pa
 import pyarrow.parquet as pq
 from datetime import datetime
-
+from Utils import *
 
 # โหลดค่าจากไฟล์ .env
 load_dotenv()
@@ -44,6 +44,7 @@ gcs_folder = 'snowflake'
 project_id = credentials.project_id
 dataset_id = 'wh_staging'
 
+
 # Function to export data from Snowflake to GCS as Parquet
 def export_table_to_gcs_as_parquet(table_name):
     # Construct the filename with the table name and export date
@@ -58,9 +59,13 @@ def export_table_to_gcs_as_parquet(table_name):
 
     # Fetch the data into a pandas DataFrame
     df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
+   
+    bq_schema = get_bq_schema(client_bq, dataset_id, table_name)
 
+        # Adjust DataFrame columns to match BigQuery schema
+    df_adjusted = adjust_dataframe_types(df, bq_schema)
     # Convert the DataFrame to a Parquet file using PyArrow
-    table = pa.Table.from_pandas(df)
+    table = pa.Table.from_pandas(df_adjusted)
     pq.write_table(table, '/tmp/' + file_name)
 
     # Upload the Parquet file to Google Cloud Storage

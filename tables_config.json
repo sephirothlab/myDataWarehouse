@@ -2,7 +2,7 @@
     {
         "table_name": "STORE_SALES",
         "timestamp_columns": ["SS_SOLD_DATE_SK", "SS_SOLD_TIME_SK"],
-        "pk_column": "SS_SOLD_DATE_SK",
+        "pk_column": "SS_SOLD_DATE_SK|SS_SOLD_TIME_SK|SS_ITEM_SK|SS_CUSTOMER_SK",
         "metric_columns": ["SS_NET_PAID", "SS_SALES_PRICE"],
         "source": "snf"
     },
