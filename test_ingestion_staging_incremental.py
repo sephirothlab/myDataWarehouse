@@ -75,11 +75,12 @@ def get_max_timestamp_from_bq(table_name, timestamp_columns):
             max_timestamps[col] = row[f"max_{col}"]
     
     return max_timestamps
+
 # Function to export new data from Snowflake
 def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp):
     # Construct the query to export data from Snowflake, using the max timestamp for each timestamp column
     timestamp_conditions = ' AND '.join([
-        f"{col} > '{max_timestamp.get(col)}'" if "date" in col.lower() else f"{col} > {max_timestamp.get(col)}"
+        f"{col} > '{max_timestamp.get(col)}'" if col.lower().endswith('_date') else f"{col} > {max_timestamp.get(col)}"
         for col in timestamp_columns
     ])
     query = f"""
@@ -137,7 +138,6 @@ def load_parquet_to_bq(file_path, table_name):
 
     load_job.result()  # Wait for the job to complete
     print(f"Loaded new data into BigQuery table: {table_name}")
-
 # Main workflow
 def main(json_file):
     # Load JSON configuration
@@ -148,9 +148,6 @@ def main(json_file):
         timestamp_columns = table_info['timestamp_columns']  # List of timestamp columns
         max_timestamp = get_max_timestamp_from_bq(table_name, timestamp_columns)
 
-        # If there's no data in BigQuery, set max_timestamp to a very early date
-        if not max_timestamp:
-            max_timestamp = '1970-01-01 00:00:00'
 
         print(f"Max timestamp for {table_name}: {max_timestamp}")
 

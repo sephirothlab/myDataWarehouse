@@ -2,7 +2,7 @@ import pandas as pd
 
 
 # Function to retrieve the schema of a BigQuery table
-def get_bq_schema(client_bq, dataset_id,bigquery_table):
+def get_bq_schema(client_bq, dataset_id, bigquery_table):
     # Get the table schema from BigQuery
     bigquery_table = f"{dataset_id}.{bigquery_table}"
     table = client_bq.get_table(bigquery_table)
@@ -10,7 +10,7 @@ def get_bq_schema(client_bq, dataset_id,bigquery_table):
 
 # Function to dynamically adjust DataFrame column types based on BigQuery schema
 def adjust_dataframe_types(df, bq_schema):
-    print(df)
+    #print(df)
     df = df.fillna(0)
     for field in bq_schema:
         column_name = field.name

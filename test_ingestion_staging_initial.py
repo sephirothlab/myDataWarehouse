@@ -1,15 +1,13 @@
-import snowflake.connector
-import pandas as pd
-from dotenv import load_dotenv
 import os
+import snowflake.connector
+from dotenv import load_dotenv
 from google.cloud import storage, bigquery
 from google.oauth2 import service_account
-from io import StringIO
 import pyarrow as pa
 import pyarrow.parquet as pq
 from datetime import datetime
-from Utils import *
-
+import pandas as pd
+from Utils import get_bq_schema, adjust_dataframe_types
 # โหลดค่าจากไฟล์ .env
 load_dotenv()
 
@@ -44,6 +42,17 @@ gcs_folder = 'snowflake'
 project_id = credentials.project_id
 dataset_id = 'wh_staging'
 
+# Function to get all table names from Snowflake
+def get_all_tables_from_snowflake():
+    # Query to get all table names in the specified schema
+    query = f"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{snowflake_schema}'"
+    cursor = conn.cursor()
+    cursor.execute(query)
+
+    tables = cursor.fetchall()
+    cursor.close()
+
+    return [table[0] for table in tables]
 
 # Function to export data from Snowflake to GCS as Parquet
 def export_table_to_gcs_as_parquet(table_name):
@@ -75,12 +84,13 @@ def export_table_to_gcs_as_parquet(table_name):
 
     print(f"Exported {table_name} to GCS: {file_path}")
     cursor.close()
+    return file_name
 
 # Function to load data from GCS to BigQuery
-def load_gcs_to_bq(table_name):
+def load_gcs_to_bq(table_name, file_name):
     # Construct the GCS file path and the BigQuery table reference
-    export_date = datetime.now().strftime("%Y%m%d")
-    file_name = f"{table_name}_{export_date}.parquet"
+    #export_date = datetime.now().strftime("%Y%m%d")
+   # file_name = f"{table_name}_{export_date}.parquet"
     gcs_file_path = f"gs://{gcs_bucket_name}/{gcs_folder}/{file_name}"
 
     # Define the BigQuery table reference
@@ -99,29 +109,17 @@ def load_gcs_to_bq(table_name):
     load_job.result()  # Wait for the job to complete
     print(f"Loaded {file_name} into BigQuery table {table_name}.")
 
-# Function to get all table names from Snowflake
-def get_all_tables_from_snowflake():
-    # Query to get all table names in the specified schema
-    query = f"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{snowflake_schema}'"
-    cursor = conn.cursor()
-    cursor.execute(query)
 
-    tables = cursor.fetchall()
-    cursor.close()
-
-    return [table[0] for table in tables]
-
-# Main workflow
 def main():
-    # Get the list of tables from Snowflake
+    # STEP 1: Get the list of tables from Snowflake
     tables = get_all_tables_from_snowflake()
 
     for table in tables:
-        # Export each table to GCS as Parquet
-        export_table_to_gcs_as_parquet(table)
+        # STEP 2: Export each table to GCS as Parquet
+        file_name = export_table_to_gcs_as_parquet(table)
 
-        # Load the exported data from GCS to BigQuery
-        load_gcs_to_bq(table)
+        # STEP 3: Load the exported data from GCS to BigQuery
+        load_gcs_to_bq(table, file_name)
 
     # Close the Snowflake connection
     conn.close()
