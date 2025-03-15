@@ -16,8 +16,6 @@ credentials = service_account.Credentials.from_service_account_file(service_acco
 
 # สร้าง client สำหรับเชื่อมต่อกับ BigQuery โดยใช้ credentials ที่กำหนดเอง
 client_bq = bigquery.Client(credentials=credentials, project=credentials.project_id)
-client_gcs = storage.Client(credentials=credentials, project=credentials.project_id)
-
 
 project_id = credentials.project_id
 # Define dataset names
@@ -29,7 +27,24 @@ def get_all_tables_in_staging():
     tables = client_bq.list_tables(staging_dataset)
     return [table.table_id for table in tables]
 
-# Function to create table in raw dataset with additional columns
+# Function to insert data from staging table into the raw table
+def insert_data_into_raw_table(staging_table_name, raw_table_name):
+    query = f"""
+        INSERT INTO `{raw_dataset}.{raw_table_name}` 
+        (SELECT *, 
+            CURRENT_TIMESTAMP() AS ingestion_datetime, 
+            'snf_system' AS source_system, 
+            CURRENT_TIMESTAMP() AS scd_startdate, 
+            NULL AS scd_enddate
+        FROM `{staging_dataset}.{staging_table_name}`)
+    """
+    
+    # Run the query to insert data from staging to raw
+    query_job = client_bq.query(query)
+    query_job.result()  # Wait for the job to complete
+    print(f"Inserted data from {staging_table_name} into {raw_table_name}")
+
+
 def create_raw_table_from_staging(table_name):
     # Get the schema of the staging table
     staging_table_ref = client_bq.dataset(staging_dataset).table(table_name)
@@ -59,29 +74,12 @@ def create_raw_table_from_staging(table_name):
     # Insert data from staging to raw dataset
     insert_data_into_raw_table(table_name, new_table_name)
 
-# Function to insert data from staging table into the raw table
-def insert_data_into_raw_table(staging_table_name, raw_table_name):
-    query = f"""
-        INSERT INTO `{raw_dataset}.{raw_table_name}` 
-        (SELECT *, 
-            CURRENT_TIMESTAMP() AS ingestion_datetime, 
-            'snf_system' AS source_system, 
-            CURRENT_TIMESTAMP() AS scd_startdate, 
-            NULL AS scd_enddate
-        FROM `{staging_dataset}.{staging_table_name}`)
-    """
-    
-    # Run the query to insert data from staging to raw
-    query_job = client_bq.query(query)
-    query_job.result()  # Wait for the job to complete
-    print(f"Inserted data from {staging_table_name} into {raw_table_name}")
-
 # Main function to loop through all tables and create corresponding tables in the raw dataset
 def main():
-    # Get all tables from the staging dataset
+    # Step 1: Get all tables from the staging dataset
     tables_in_staging = get_all_tables_in_staging()
 
-    # Loop through each table and create the corresponding table in the raw dataset
+    # Step 2: Loop through each table and create the corresponding table in the raw dataset
     for table_name in tables_in_staging:
         create_raw_table_from_staging(table_name)
 

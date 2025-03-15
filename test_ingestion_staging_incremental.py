@@ -42,7 +42,7 @@ client_gcs = storage.Client(credentials=credentials, project=credentials.project
 
 # Google Cloud Storage and BigQuery settings
 gcs_bucket_name = 'ojsnd-data-landing-zone'
-gcs_folder = 'ojsnd-data-landing-zone/snowflake'  
+gcs_folder = 'snowflake'  
 project_id = credentials.project_id
 dataset_id = 'wh_staging'
 
@@ -97,7 +97,7 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
     df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
 
     # Convert the DataFrame to a Parquet file using PyArrow
-    export_date = datetime.now().strftime("%Y-%m-%d")
+    export_date = datetime.now().strftime("%Y%m%d")
     file_name = f"{table_name}_{export_date}.parquet"
     file_path = f"{gcs_folder}/{file_name}"
     
@@ -106,7 +106,9 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
     df_adjusted = adjust_dataframe_types(df, bq_schema)
     # Convert the DataFrame to a Parquet file using PyArrow
     table = pa.Table.from_pandas(df_adjusted)
+    pq.write_table(table, '/tmp/' + file_name)
     # Upload the Parquet file to Google Cloud Storage
+    
     bucket = client_gcs.get_bucket(gcs_bucket_name)
     blob = bucket.blob(file_path)
     blob.upload_from_filename('/tmp/' + file_name)
