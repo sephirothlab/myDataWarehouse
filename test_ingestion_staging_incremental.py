@@ -89,6 +89,12 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
         WHERE {timestamp_conditions}
         LIMIT 100
     """
+    if 'None' in query:
+            query = f"""
+        SELECT *
+        FROM {snowflake_schema}.{table_name}
+        LIMIT 100
+    """
     print(query)
     cursor = conn.cursor()
     cursor.execute(query)
