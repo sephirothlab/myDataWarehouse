@@ -110,9 +110,9 @@ def export_data_from_snowflake(snowflake_table, where_condition, bigquery_table)
 
         bq_schema = get_bq_schema(client_bq, dataset_id, bigquery_table)
         # Adjust DataFrame columns to match BigQuery schema
-        df_adjusted = adjust_dataframe_types(df, bq_schema)
+        df_adjusted, ref_schema = adjust_dataframe_types(df, bq_schema)
         # Convert the DataFrame to a Parquet file using PyArrow
-        table = pa.Table.from_pandas(df_adjusted)
+        table = pa.Table.from_pandas(df_adjusted, schema=ref_schema)
         # Save Arrow Table as Parquet file locally
        
         pq.write_table(table, parquet_file)

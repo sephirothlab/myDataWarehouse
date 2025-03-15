@@ -72,9 +72,9 @@ def export_table_to_gcs_as_parquet(table_name):
     bq_schema = get_bq_schema(client_bq, dataset_id, table_name)
 
         # Adjust DataFrame columns to match BigQuery schema
-    df_adjusted = adjust_dataframe_types(df, bq_schema)
+    df_adjusted, ref_schema = adjust_dataframe_types(df, bq_schema)
     # Convert the DataFrame to a Parquet file using PyArrow
-    table = pa.Table.from_pandas(df_adjusted)
+    table = pa.Table.from_pandas(df_adjusted, schema=ref_schema)
     pq.write_table(table, '/tmp/' + file_name)
 
     # Upload the Parquet file to Google Cloud Storage

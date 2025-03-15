@@ -44,8 +44,10 @@ client_gcs = storage.Client(credentials=credentials, project=credentials.project
 gcs_bucket_name = 'ojsnd-data-landing-zone'
 gcs_folder = 'snowflake'  
 project_id = credentials.project_id
-dataset_id = 'wh_staging'
+dataset_staging_id = 'wh_staging'
+dataset_raw_id = 'wh_raw'
 
+source = 'snf_'
 
 # Read the JSON configuration file
 def load_json_config(json_file):
@@ -61,7 +63,7 @@ def get_max_timestamp_from_bq(table_name, timestamp_columns):
     # Construct the query to get max timestamps from BigQuery
     query = f"""
         SELECT {timestamp_conditions}
-        FROM `{project_id}.{dataset_id}.{table_name}`
+        FROM `{project_id}.{dataset_raw_id}.{source}{table_name}`
     """
     
     # Run the query
@@ -107,12 +109,17 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
     file_name = f"{table_name}_{export_date}.parquet"
     file_path = f"{gcs_folder}/{file_name}"
     
-    bq_schema = get_bq_schema(client_bq, dataset_id, table_name)
+    bq_schema = get_bq_schema(client_bq, dataset_staging_id, table_name)
     # Adjust DataFrame columns to match BigQuery schema
-    df_adjusted = adjust_dataframe_types(df, bq_schema)
+    df_adjusted, ref_schema = adjust_dataframe_types(df, bq_schema)
     # Convert the DataFrame to a Parquet file using PyArrow
-    table = pa.Table.from_pandas(df_adjusted)
+    table = pa.Table.from_pandas(df_adjusted, schema=ref_schema)
+    # Print Schema
+    print(table.schema)
     pq.write_table(table, '/tmp/' + file_name)
+    parquet_file = pq.ParquetFile('/tmp/' + file_name)
+    # Print the schema
+    print(parquet_file.schema)
     # Upload the Parquet file to Google Cloud Storage
     
     bucket = client_gcs.get_bucket(gcs_bucket_name)
@@ -127,8 +134,11 @@ def export_new_data_from_snowflake(table_name, timestamp_columns, max_timestamp)
 # Function to load the exported Parquet file into BigQuery
 def load_parquet_to_bq(file_path, table_name):
     # Define the BigQuery table reference
-    table_ref = client_bq.dataset(dataset_id).table(table_name)
-
+    table_ref = client_bq.dataset(dataset_staging_id).table(table_name)
+    table = client_bq.get_table(table_ref)
+    # Print schema
+    for field in table.schema:
+        print(f"Column Name: {field.name}, Type: {field.field_type}, Mode: {field.mode}")
     # Define the URI for the Parquet file in GCS
     gcs_uri = f"gs://{gcs_bucket_name}/{file_path}"
 
@@ -136,7 +146,6 @@ def load_parquet_to_bq(file_path, table_name):
     job_config = bigquery.LoadJobConfig(
         source_format=bigquery.SourceFormat.PARQUET,
         autodetect=True,  # Automatically detect schema from the Parquet file
-        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE  # Replace table (truncate)
     )
 
     # Load the Parquet data from GCS into BigQuery
