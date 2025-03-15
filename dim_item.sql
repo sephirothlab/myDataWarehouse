@@ -1,3 +1,4 @@
+create or replace view `wh_dimension.ITEM_VW` as
 select
 I_ITEM_SK,
 I_PRODUCT_NAME,

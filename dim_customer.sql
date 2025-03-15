@@ -1,3 +1,4 @@
+create or replace view `wh_dimension.CUSTOMER_VW` as
 select
 C_CUSTOMER_SK
 C_FIRST_NAME,

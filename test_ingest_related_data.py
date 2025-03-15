@@ -76,6 +76,7 @@ def get_distinct_values_from_bq(bigquery_column):
     query = f"""
         SELECT DISTINCT {bigquery_column}
         FROM `{dataset_id}.STORE_SALES`
+        WHERE {bigquery_column} is not null
     """
     query_job = client_bq.query(query)
     result = query_job.result()
@@ -100,7 +101,7 @@ def export_data_from_snowflake(snowflake_table, where_condition, bigquery_table)
             FROM {snowflake_table}
             WHERE {where_condition}
         """
-        
+        print(snowflake_query)
         # Execute the query in Snowflake
         cursor = conn.cursor()
         cursor.execute(snowflake_query)
