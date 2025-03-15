@@ -4,6 +4,6 @@ select
   CASE
     WHEN CD_GENDER = 'F' THEN 'หญิง'
     WHEN CD_GENDER = 'M' THEN 'ชาย'
-    ELSE 'Unknown'  -- If there are other unexpected values
+    ELSE 'ไม่ระบุ'  -- If there are other unexpected values
   END AS CD_GENDER_TH
-from `wh_raw.CUSTOMER_DEMOGRAPHICS`
+from `wh_raw.snf_CUSTOMER_DEMOGRAPHICS`

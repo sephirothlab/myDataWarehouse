@@ -13,4 +13,4 @@ D_Year + 543 as D_Year_BE,
         WHEN 'Sunday' THEN 'อาทิตย์'
         ELSE D_DAY_NAME  -- In case there's an unexpected value
     END AS D_DAY_NAME_TH
-from wh_raw.DATE_DIM
+from wh_raw.snf_DATE_DIM

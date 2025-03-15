@@ -1,4 +1,4 @@
-create or replace view `wh_dimension.CUSTOMER_DEMOGRAPHICS_VW` as
+create or replace view `wh_dimension.DIM_CUSTOMER_DEMOGRAPHICS_VW` as
 select
 CD_DEMO_SK,
 CD_GENDER_TH,

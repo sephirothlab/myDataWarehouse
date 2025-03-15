@@ -6,4 +6,4 @@ SS_ITEM_SK,
 SS_CUSTOMER_SK,
 SS_CDEMO_SK,
 SS_NET_PAID
-from wh_conformed.STORE_SALES
+from wh_conformed.STORE_SALES_VW

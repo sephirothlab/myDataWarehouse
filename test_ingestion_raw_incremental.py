@@ -1,14 +1,8 @@
-import snowflake.connector
-import pandas as pd
 from dotenv import load_dotenv
 import os
 import json
 from google.cloud import storage, bigquery
 from google.oauth2 import service_account
-from io import StringIO
-import pyarrow as pa
-import pyarrow.parquet as pq
-from datetime import datetime
 
 
 # โหลดค่าจากไฟล์ .env
@@ -22,8 +16,6 @@ credentials = service_account.Credentials.from_service_account_file(service_acco
 
 # สร้าง client สำหรับเชื่อมต่อกับ BigQuery โดยใช้ credentials ที่กำหนดเอง
 client_bq = bigquery.Client(credentials=credentials, project=credentials.project_id)
-client_gcs = storage.Client(credentials=credentials, project=credentials.project_id)
-
 
 
 project_id = credentials.project_id
@@ -46,7 +38,7 @@ def upsert_data_with_cte(table_name, pk_column, source):
         pk_condition = " AND ".join([f"raw.{col} = staging.{col}" for col in pk_columns])
     else:
         pk_condition = f"raw.{pk_column} = staging.{pk_column}"
-        
+
     query = f"""
         -- Update existing records' scd_enddate to current timestamp
         UPDATE `{raw_dataset}.{source}_{table_name}` raw
