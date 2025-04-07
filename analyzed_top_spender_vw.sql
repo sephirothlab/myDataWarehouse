@@ -1,4 +1,4 @@
-create or replace view 
+create or replace view `wh_analyzed.Report_Top_Spender` as
 with top_spender as (
 SELECT 
 SS_CUSTOMER_SK,
